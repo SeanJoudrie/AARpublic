@@ -1,9 +1,10 @@
 name: Deploy to GitHub Pages
 
-# One-time setup before this can run:
-#   Settings → Pages → Build and deployment → Source: "GitHub Actions".
+# `configure-pages` with `enablement: true` turns Pages on via the API using
+# this workflow's own token, so nobody has to visit Settings → Pages first.
+# That needs the `pages: write` permission below.
 #
-# The site deploys in DEMO MODE until the repository variables below are set
+# The site runs in DEMO MODE until the repository variables below are set
 # (Settings → Secrets and variables → Actions → Variables). They are repository
 # *variables*, not secrets, on purpose: the Supabase anon key and the Turnstile
 # site key are public by design and are compiled into the client bundle. The
@@ -38,6 +39,8 @@ jobs:
 
       - id: pages
         uses: actions/configure-pages@v5
+        with:
+          enablement: true
 
       - run: npm ci
 
@@ -49,6 +52,11 @@ jobs:
           VITE_TRANSLATE_URL: ${{ vars.VITE_TRANSLATE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
           VITE_TURNSTILE_SITE_KEY: ${{ vars.VITE_TURNSTILE_SITE_KEY }}
+
+      # Vite emits chunks whose names start with an underscore
+      # (_commonjsHelpers-*.js). Pages' artifact path doesn't run Jekyll, but
+      # this keeps it true if the deploy ever moves to a branch source.
+      - run: touch dist/.nojekyll
 
       - uses: actions/upload-pages-artifact@v3
         with:
