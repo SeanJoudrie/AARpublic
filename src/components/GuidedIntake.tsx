@@ -116,7 +116,7 @@ export function GuidedIntake({
               if (e.key === 'Enter') look(query)
             }}
             placeholder="e.g. 11B, 68 whiskey, or “I ran supply for my company”"
-            className="w-full rounded-lg border border-navy-700 bg-navy-900/60 px-4 py-3 text-ink placeholder:text-faint focus:border-accent focus:outline-none"
+            className="w-full rounded-lg border border-edge bg-surface px-4 py-3 text-ink placeholder:text-faint focus:border-accent focus:outline-none"
           />
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-xs text-faint">Try:</span>
@@ -127,7 +127,7 @@ export function GuidedIntake({
                   setQuery(ex)
                   look(ex)
                 }}
-                className="token border-navy-700 bg-navy-850 text-steel transition-colors hover:border-accent hover:text-accent"
+                className="token border-rule-strong bg-raised text-steel transition-colors hover:border-accent hover:text-accent"
               >
                 {ex}
               </button>
@@ -155,7 +155,7 @@ export function GuidedIntake({
         <div className="space-y-5">
           {role.title ? (
             <>
-              <div className="rounded-xl border border-navy-700 bg-navy-900/40 p-5">
+              <div className="rounded-xl border border-edge bg-surface p-5">
                 <p className="label mb-1">What we found</p>
                 <p className="font-display text-xl font-bold text-ink">
                   {role.code}
@@ -189,7 +189,7 @@ export function GuidedIntake({
               value={ownTitle}
               onChange={(e) => setOwnTitle(e.target.value)}
               placeholder="e.g. Supply sergeant for a 150-person company"
-              className="w-full rounded-lg border border-navy-700 bg-navy-900/60 px-4 py-3 text-ink placeholder:text-faint focus:border-accent focus:outline-none"
+              className="w-full rounded-lg border border-edge bg-surface px-4 py-3 text-ink placeholder:text-faint focus:border-accent focus:outline-none"
             />
           </div>
 
@@ -218,7 +218,7 @@ export function GuidedIntake({
             {allDuties.map((duty) => {
               const on = duty in picked
               return (
-                <li key={duty} className="rounded-lg border border-navy-800 bg-navy-900/30">
+                <li key={duty} className="rounded-lg border border-rule bg-surface">
                   <label className="flex cursor-pointer items-start gap-3 p-3.5">
                     <input
                       type="checkbox"
@@ -229,7 +229,7 @@ export function GuidedIntake({
                     <span
                       aria-hidden
                       className={`mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded border transition-colors ${
-                        on ? 'border-accent bg-accent text-navy-950' : 'border-navy-600'
+                        on ? 'border-accent bg-accent text-on-btn' : 'border-rule-strong'
                       }`}
                     >
                       {on && <CheckIcon className="h-3.5 w-3.5" />}
@@ -244,7 +244,7 @@ export function GuidedIntake({
                         value={picked[duty]}
                         onChange={(e) => setPicked((p) => ({ ...p, [duty]: e.target.value }))}
                         placeholder="Any numbers you’re sure of? e.g. 12 people, $2M of equipment"
-                        className="w-full rounded-lg border border-navy-700 bg-navy-950/60 px-3 py-2 text-sm text-ink placeholder:text-faint focus:border-accent focus:outline-none"
+                        className="w-full rounded-lg border border-edge bg-surface px-3 py-2 text-sm text-ink placeholder:text-faint focus:border-accent focus:outline-none"
                       />
                     </div>
                   )}
@@ -269,7 +269,7 @@ export function GuidedIntake({
                   }
                 }}
                 placeholder="Add it in your own words"
-                className="flex-1 rounded-lg border border-navy-700 bg-navy-900/60 px-4 py-2.5 text-ink placeholder:text-faint focus:border-accent focus:outline-none"
+                className="flex-1 rounded-lg border border-edge bg-surface px-4 py-2.5 text-ink placeholder:text-faint focus:border-accent focus:outline-none"
               />
               <button onClick={addExtra} disabled={!extra.trim()} className="btn btn-ghost px-4 py-2.5">
                 Add

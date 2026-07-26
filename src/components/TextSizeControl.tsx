@@ -35,7 +35,7 @@ export function TextSizeControl() {
           aria-pressed={px === l.px}
           onClick={() => setPx(l.px)}
           className={`grid min-h-9 min-w-9 place-items-center rounded-md px-2 font-display font-bold leading-none transition-colors ${
-            px === l.px ? 'bg-accent text-navy-950' : 'text-mute hover:text-ink'
+            px === l.px ? 'bg-accent text-on-btn' : 'text-mute hover:text-ink'
           }`}
           style={{ fontSize: `${0.7 + (l.px - 16) * 0.03}rem` }}
         >

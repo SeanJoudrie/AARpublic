@@ -68,7 +68,7 @@ export function StepJob({
         </div>
       )}
 
-      <div className="space-y-2 max-sm:sticky max-sm:bottom-0 max-sm:z-10 max-sm:-mx-5 max-sm:border-t max-sm:border-navy-800 max-sm:bg-navy-950/95 max-sm:px-5 max-sm:py-3 max-sm:backdrop-blur">
+      <div className="space-y-2 max-sm:sticky max-sm:bottom-0 max-sm:z-10 max-sm:-mx-5 max-sm:border-t max-sm:border-rule max-sm:bg-ground/95 max-sm:px-5 max-sm:py-3 max-sm:backdrop-blur">
         <div className="flex items-center gap-3">
           <button onClick={onBack} className="btn btn-ghost px-5 py-3.5">
             <ArrowLeftIcon className="h-4 w-4" />

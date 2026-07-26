@@ -47,7 +47,7 @@ export function BulletCard({
 
   return (
     <div
-      className="fade-up border-t border-navy-800 py-5 first:border-t-0"
+      className="fade-up border-t border-rule py-5 first:border-t-0"
       style={{ animationDelay: `${index * 55}ms` }}
     >
       <div className="flex items-start gap-4">
@@ -59,7 +59,7 @@ export function BulletCard({
             onChange={(e) => setText(e.target.value)}
             onBlur={() => setEditing(false)}
             rows={2}
-            className="flex-1 resize-none rounded-lg border border-accent bg-navy-900/60 px-3 py-2 text-[0.95rem] leading-relaxed text-ink focus:outline-none"
+            className="flex-1 resize-none rounded-lg border border-accent bg-surface px-3 py-2 text-[0.95rem] leading-relaxed text-ink focus:outline-none"
           />
         ) : (
           <p
@@ -85,7 +85,7 @@ export function BulletCard({
       {bullet.keywords.length > 0 && (
         <ul className="mt-3 flex flex-wrap gap-1.5 pl-6">
           {bullet.keywords.map((k) => (
-            <li key={k} className="token border-navy-700 bg-navy-850 text-steel">
+            <li key={k} className="token border-rule-strong bg-raised text-steel">
               {k}
             </li>
           ))}
@@ -133,7 +133,7 @@ export function BulletCard({
               if (e.key === 'Enter' && instruction.trim()) doRephrase(instruction)
             }}
             placeholder="e.g. shorter · say more about leading people · less military-sounding"
-            className="min-w-0 flex-1 rounded-lg border border-navy-700 bg-navy-900/60 px-3 py-2 text-sm text-ink placeholder:text-faint focus:border-accent focus:outline-none"
+            className="min-w-0 flex-1 rounded-lg border border-edge bg-surface px-3 py-2 text-sm text-ink placeholder:text-faint focus:border-accent focus:outline-none"
           />
           <button
             onClick={() => doRephrase(instruction)}
@@ -159,7 +159,7 @@ export function BulletCard({
                     setText(a)
                     setAlts(null)
                   }}
-                  className="block w-full rounded-lg border border-navy-700 bg-navy-900/50 px-3 py-2 text-left text-sm text-mute transition-colors hover:border-accent hover:text-ink"
+                  className="block w-full rounded-lg border border-edge bg-surface px-3 py-2 text-left text-sm text-mute transition-colors hover:border-accent hover:text-ink"
                 >
                   {a}
                 </button>

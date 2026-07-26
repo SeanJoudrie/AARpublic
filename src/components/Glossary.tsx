@@ -5,7 +5,7 @@ import type { GlossaryHit } from '../lib/glossary'
 export function Glossary({ hits }: { hits: GlossaryHit[] }) {
   if (hits.length === 0) return null
   return (
-    <details className="mt-8 border border-navy-700 bg-navy-900/30 p-5" style={{ borderRadius: 12 }}>
+    <details className="mt-8 border border-edge bg-surface p-5" style={{ borderRadius: 12 }}>
       <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-semibold text-ink marker:content-none">
         <span className="label text-steel">Military terms we spotted ({hits.length})</span>
         <span className="text-xs font-normal text-faint">— plain-English translations</span>

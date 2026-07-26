@@ -149,7 +149,9 @@ exact 1200×630 viewport (the file's header comment has the command).
 
 ## Stack
 
-React 19 · Vite 6 · TypeScript · Tailwind v4 · Supabase Edge Functions (Deno) ·
+React 19 · Vite 6 · TypeScript · Tailwind v4 ("The Brief" design system — semantic
+tokens, light-first with a deliberate dark theme) · self-hosted Newsreader + IBM Plex Sans ·
+Supabase Edge Functions (Deno) ·
 Claude (`claude-opus-5`, streaming) · pdf.js + mammoth (upload) · Tesseract.js (on-device
 photo OCR, self-hosted) · docx + jsPDF (export).
 

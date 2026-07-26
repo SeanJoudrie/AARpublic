@@ -66,7 +66,7 @@ export function ResultPanel({
       {/* Sticky mini-header for small screens. On desktop the rail already
           carries the score and the jump nav, so this would just duplicate it. */}
       <div
-        className={`no-print sticky top-0 z-20 -mx-1 mb-2 flex items-center gap-3 rounded-b-xl border-b border-navy-700 bg-navy-950 px-3 py-2 transition-all lg:hidden ${
+        className={`no-print sticky top-0 z-20 -mx-1 mb-2 flex items-center gap-3 rounded-b-xl border-b border-rule-strong bg-ground px-3 py-2 transition-all lg:hidden ${
           showMini ? 'opacity-100' : 'pointer-events-none -translate-y-2 opacity-0'
         }`}
       >
@@ -83,7 +83,7 @@ export function ResultPanel({
 
       {/* The verdict leads. This is what they came for — it used to sit below a
           block of instructions explaining how to use a thing they hadn't seen. */}
-      <section ref={scoreRef} className="fade-up border border-navy-700 bg-navy-900/40 p-6" style={{ borderRadius: 14 }}>
+      <section ref={scoreRef} className="fade-up border border-edge bg-surface p-6" style={{ borderRadius: 14 }}>
         <h3
           ref={headingRef}
           tabIndex={-1}
@@ -97,7 +97,7 @@ export function ResultPanel({
             Excellent match — you’re a strong candidate for this role. Lead with the summary below.
           </p>
         )}
-        <div className="mt-5 flex items-start justify-between gap-4 border-t border-navy-800 pt-5">
+        <div className="mt-5 flex items-start justify-between gap-4 border-t border-rule pt-5">
           <p className="text-[0.95rem] leading-relaxed text-mute">{result.summary}</p>
           <ReadAloud text={result.summary} className="shrink-0" />
         </div>
@@ -166,7 +166,7 @@ function ExportBar({ result, jobTitle }: { result: TranslateResult; jobTitle: st
     setTimeout(() => setToast(''), 2200)
   }
   return (
-    <div className="no-print border-y border-navy-800 py-4">
+    <div className="no-print border-y border-rule py-4">
       <div className="flex flex-wrap items-center gap-2">
         <span className="label mr-2 flex items-center gap-1.5">
           Save your résumé
@@ -234,7 +234,7 @@ function ErrorState({ error, onRetry }: { error: string; onRetry: () => void }) 
 
 function Empty() {
   return (
-    <div className="grid h-full min-h-64 place-items-center border border-dashed border-navy-700 p-10 text-center" style={{ borderRadius: 14 }}>
+    <div className="grid h-full min-h-64 place-items-center border border-dashed border-rule-strong p-10 text-center" style={{ borderRadius: 14 }}>
       <div>
         <p className="font-display text-lg font-semibold text-mute">Your translation lands here.</p>
         <p className="mx-auto mt-2 max-w-sm text-sm text-faint">
@@ -268,14 +268,14 @@ function Streaming({ bullets }: { bullets: string[] }) {
             ? `Almost there — ${bullets.length} line${bullets.length > 1 ? 's' : ''} rewritten`
             : `${NARRATION[phase]}…`}
         </p>
-        <div className="mt-3 h-1 w-full overflow-hidden rounded-full bg-navy-800">
+        <div className="mt-3 h-1 w-full overflow-hidden rounded-full bg-rule">
           <div className="scanbar h-full w-full" />
         </div>
       </div>
 
       <div>
         {bullets.map((b, i) => (
-          <div key={i} className="fade-up flex items-start gap-4 border-t border-navy-800 py-5 first:border-t-0">
+          <div key={i} className="fade-up flex items-start gap-4 border-t border-rule py-5 first:border-t-0">
             <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
             <p className="text-[0.95rem] leading-relaxed text-ink">{b}</p>
           </div>

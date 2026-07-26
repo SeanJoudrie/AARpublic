@@ -44,9 +44,9 @@ export function MatchScore({ score }: { score: number }) {
 
   return (
     <div className="flex items-center gap-5">
-      <div className="relative h-32 w-32 shrink-0">
+      <div className="relative h-32 w-32 shrink-0 lg:hidden">
         <svg viewBox="0 0 120 120" className="h-full w-full -rotate-90">
-          <circle cx="60" cy="60" r={R} fill="none" stroke="var(--color-navy-800)" strokeWidth="10" />
+          <circle cx="60" cy="60" r={R} fill="none" stroke="var(--color-rule)" strokeWidth="10" />
           <circle
             cx="60"
             cy="60"
@@ -70,7 +70,7 @@ export function MatchScore({ score }: { score: number }) {
           Match score
           <InfoTip label="0–100 fit between your résumé and this job. Under ~45 is a stretch, 45–70 is decent, 70+ is strong. It's honest on purpose — a weak match scores low so you know where you stand." />
         </p>
-        <p className="mt-1 flex items-center gap-2 font-display text-sm font-bold" style={{ color }}>
+        <p className="mt-1 flex items-center gap-2 text-sm font-semibold" style={{ color }}>
           <span className="h-2 w-2 rounded-full" style={{ background: color }} />
           {word}
         </p>

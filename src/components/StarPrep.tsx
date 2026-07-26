@@ -65,7 +65,7 @@ export function StarPrep({ answers }: { answers: StarAnswer[] }) {
         <details
           key={`${epoch}-${i}`}
           open={allOpen ?? i === 0}
-          className="group border border-navy-700 bg-navy-900/30 p-5"
+          className="group border border-edge bg-surface p-5"
           style={{ borderRadius: 12 }}
         >
           <summary className="flex cursor-pointer list-none items-start justify-between gap-3 font-display text-base font-semibold text-ink marker:content-none">

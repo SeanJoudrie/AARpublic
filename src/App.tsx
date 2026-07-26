@@ -112,10 +112,10 @@ export function App() {
       >
         Skip to content
       </a>
-      <header className="border-b border-navy-800/70">
+      <header className="border-b border-rule">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 sm:px-8">
           <div className="flex items-center gap-2.5">
-            <span className="grid h-7 w-7 place-items-center rounded bg-accent font-display text-xs font-extrabold text-navy-950">
+            <span className="grid h-7 w-7 place-items-center rounded bg-accent text-[0.62rem] font-bold tracking-tight text-on-btn">
               AAR
             </span>
             <span className="hidden text-sm text-faint sm:inline">After-Action Resume</span>
@@ -158,8 +158,8 @@ export function App() {
                             now
                               ? 'border-accent text-ink'
                               : done
-                                ? 'border-navy-700 text-mute hover:border-steel hover:text-ink'
-                                : 'border-navy-800 text-faint'
+                                ? 'border-rule-strong text-mute hover:border-steel hover:text-ink'
+                                : 'border-rule text-faint'
                           }`}
                         >
                           <span className="font-display text-xs font-extrabold">{s.n}</span>
@@ -169,36 +169,37 @@ export function App() {
                     )
                   })}
                 </ol>
-                <p className="flex items-start gap-2 border-t border-navy-800 pt-5 text-xs leading-relaxed text-faint">
+                <p className="flex items-start gap-2 border-t border-rule pt-5 text-xs leading-relaxed text-faint">
                   <LockIcon className="mt-0.5 h-3.5 w-3.5 shrink-0" />
                   Your file is read on your device and never uploaded.
                 </p>
               </>
             ) : (
               <>
+                {/* The verdict rail: an ink block against paper. This is the
+                    one place the design raises its voice, so everything
+                    around it stays quiet. */}
                 {result && (
-                  <div>
-                    <p className="label mb-1">Match score</p>
-                    <p className="font-display text-4xl font-extrabold text-head">
+                  <div className="bg-rail px-5 py-5 text-on-rail" style={{ borderRadius: 12 }}>
+                    <p className="label !text-on-rail/60">Match score</p>
+                    <p className="mt-1 font-display text-5xl font-semibold leading-none">
                       {result.matchScore}
-                      <span className="ml-1 text-sm font-semibold text-faint">/ 100</span>
+                      <span className="ml-1.5 align-baseline text-sm font-normal text-on-rail/60">/ 100</span>
                     </p>
+                    <nav className="mt-5 space-y-0 border-t border-on-rail/15 pt-3">
+                      {JUMPS.map((j) => (
+                        <a
+                          key={j.id}
+                          href={`#${j.id}`}
+                          className="block py-1.5 text-sm text-on-rail/70 transition-colors hover:text-on-rail"
+                        >
+                          {j.label}
+                        </a>
+                      ))}
+                    </nav>
                   </div>
                 )}
-                {result && (
-                  <nav className="space-y-0 border-t border-navy-800 pt-4">
-                    {JUMPS.map((j) => (
-                      <a
-                        key={j.id}
-                        href={`#${j.id}`}
-                        className="block border-l-2 border-navy-800 py-2 pl-4 text-sm text-mute transition-colors hover:border-accent hover:text-ink"
-                      >
-                        {j.label}
-                      </a>
-                    ))}
-                  </nav>
-                )}
-                <div className="flex flex-col items-start gap-2 border-t border-navy-800 pt-5">
+                <div className="flex flex-col items-start gap-2 border-t border-rule pt-5">
                   <button onClick={() => setStep(2)} className="btn btn-ghost px-3 py-1.5 text-xs">
                     <ArrowLeftIcon className="h-3.5 w-3.5" />
                     Edit my answers
@@ -292,7 +293,7 @@ export function App() {
       </div>
       )}
 
-      <footer className="border-t border-navy-800/70">
+      <footer className="border-t border-rule">
         <div className="mx-auto max-w-6xl space-y-4 px-5 py-8 sm:px-8">
           <details className="group">
             <summary className="cursor-pointer list-none text-sm font-semibold text-mute transition-colors marker:content-none hover:text-ink">
@@ -316,7 +317,7 @@ export function App() {
             <a href="#privacy" className="font-semibold transition-colors hover:text-ink">
               Privacy
             </a>
-            <span aria-hidden className="h-3 w-px bg-navy-700" />
+            <span aria-hidden className="h-3 w-px bg-rule-strong" />
             <a href="#terms" className="font-semibold transition-colors hover:text-ink">
               Terms &amp; disclaimer
             </a>
