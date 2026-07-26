@@ -122,6 +122,23 @@ The same [`supabase/schema.sql`](./supabase/schema.sql) also defines the `runs` 
 `requirement_embeddings` tables for the stretch goals — the core app is stateless and
 needs neither.
 
+### 8. Set the public URL before the production build (social previews)
+
+Social scrapers (LinkedIn, Slack, iMessage) want an **absolute** `og:image` URL, so once
+you know where the app lives, set it before building:
+
+```
+VITE_SITE_URL=https://your-domain.example
+```
+
+`vite.config.ts` rewrites the Open Graph tags to absolute URLs at build time. Left unset,
+they stay page-relative — fine locally and for a GitHub Pages subpath, but some scrapers
+won't resolve them.
+
+The preview card itself is [`public/og.png`](./public/og.png) (1200×630). Its source is
+[`design/og-card.html`](./design/og-card.html) — edit that and re-screenshot it at an
+exact 1200×630 viewport (the file's header comment has the command).
+
 ---
 
 ## Stack
@@ -142,7 +159,9 @@ src/
     parseFile.ts           # PDF/DOCX/TXT -> text, in-browser (lazy-loaded)
     exportDoc.ts           # copy-all + DOCX/PDF export (lazy-loaded)
   components/               # MatchScore, KeywordChips, BulletCard, StarPrep, panels
+                            # Legal.tsx = the #privacy / #terms pages
   data/samples.ts          # example résumé + JD
+design/og-card.html        # source for the 1200×630 social card
 supabase/
   functions/translate/     # Deno edge function → Claude (key server-side)
   functions/rephrase/      # single-bullet rephrase → Claude
@@ -155,3 +174,16 @@ supabase/
 AAR never invents metrics the source doesn't support, and every bullet shows its
 original + a rationale. Treat the output as a strong first draft to review — not a
 final résumé.
+
+The [privacy note](./src/components/Legal.tsx) (`#privacy`) and terms (`#terms`) describe
+exactly what leaves the browser: files and photos are parsed on-device, only the text you
+type is sent — to Anthropic's Claude API, via the edge function — nothing is written to a
+database, and the only server-side record is a rate-limit counter keyed on IP that's
+dropped after a day. **If that data flow ever changes, update those pages in the same
+commit.**
+
+## CI
+
+[`.github/workflows/ci.yml`](./.github/workflows/ci.yml) runs `npm ci && npm run build`
+(which type-checks first) on every push and PR, and uploads `dist/` as an artifact. There
+are no automated tests yet — the build is the gate.

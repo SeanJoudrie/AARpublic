@@ -4,6 +4,7 @@ import { StepJob } from './components/StepJob'
 import { ResultPanel } from './components/ResultPanel'
 import { Stepper } from './components/Stepper'
 import { TextSizeControl } from './components/TextSizeControl'
+import { Legal, type LegalSection } from './components/Legal'
 import { translate, rephrase, isMockMode } from './lib/generate'
 import { ArrowLeftIcon, RefreshIcon } from './components/Icon'
 import type { TranslateResult } from './lib/types'
@@ -24,6 +25,13 @@ function clean(text: string): string {
   return text.replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').replace(/[ \t]{2,}/g, ' ').trim()
 }
 
+/** The legal pages are the app's only "other page" — a hash is enough routing,
+ *  and it keeps them linkable (and shareable) without pulling in a router. */
+function legalFromHash(): LegalSection | null {
+  const hash = window.location.hash.replace('#', '')
+  return hash === 'privacy' || hash === 'terms' ? hash : null
+}
+
 export function App() {
   const draft = loadDraft()
   const [step, setStep] = useState(1)
@@ -34,6 +42,14 @@ export function App() {
   const [error, setError] = useState<string | null>(null)
   const [progress, setProgress] = useState<string[]>([])
   const [turnstileToken, setTurnstileToken] = useState('')
+  const [legal, setLegal] = useState<LegalSection | null>(legalFromHash)
+
+  // Follow #privacy / #terms, including the back button.
+  useEffect(() => {
+    const onHash = () => setLegal(legalFromHash())
+    window.addEventListener('hashchange', onHash)
+    return () => window.removeEventListener('hashchange', onHash)
+  }, [])
 
   // Save the draft whenever the inputs change.
   useEffect(() => {
@@ -72,7 +88,16 @@ export function App() {
 
   return (
     <div className="min-h-screen">
-      <a href="#main" className="skip-link">
+      {/* Focus #main directly rather than letting the hash change — the hash is
+          what selects the legal pages. */}
+      <a
+        href="#main"
+        className="skip-link"
+        onClick={(e) => {
+          e.preventDefault()
+          document.getElementById('main')?.focus()
+        }}
+      >
         Skip to content
       </a>
       <header className="border-b border-navy-800/70">
@@ -95,7 +120,9 @@ export function App() {
         </div>
       </header>
 
-      {step === 1 && (
+      {legal && <Legal section={legal} onBack={() => { window.location.hash = '' }} />}
+
+      {!legal && step === 1 && (
         <section className="mx-auto max-w-2xl px-5 pt-12 sm:px-8">
           <div className="mb-4 flex items-center gap-3">
             <span className="label">Military</span>
@@ -112,6 +139,7 @@ export function App() {
         </section>
       )}
 
+      {!legal && (
       <main id="main" tabIndex={-1} className="mx-auto max-w-2xl px-5 py-10 outline-none sm:px-8 lg:py-14">
         {step < 3 && <Stepper step={step} onJump={setStep} />}
 
@@ -163,6 +191,7 @@ export function App() {
         )}
         </div>
       </main>
+      )}
 
       <footer className="border-t border-navy-800/70">
         <div className="mx-auto max-w-5xl space-y-4 px-5 py-8 sm:px-8">
@@ -171,14 +200,27 @@ export function App() {
               Is my information safe?
             </summary>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-faint">
-              Yes. Your file or photo is read <strong className="text-mute">on your device</strong> — it’s
-              never uploaded. When you translate, only the text you entered is sent to generate your
-              résumé, and nothing is stored on our end. Your draft is saved in your own browser so a
-              refresh won’t lose it; “Start over” clears it.
+              Your file or photo is read <strong className="text-mute">on your device</strong> — it’s
+              never uploaded. When you translate, the text you entered is sent to Anthropic’s Claude to
+              write your résumé, and it isn’t stored anywhere afterwards. Your draft is saved in your
+              own browser so a refresh won’t lose it; “Start over” clears it.{' '}
+              <a href="#privacy" className="font-semibold text-steel hover:text-ink">
+                Full privacy note
+              </a>
+              .
             </p>
           </details>
           <p className="text-sm text-faint">
             AAR · a project by Sean Joudrie · a strong first draft — always read it over before you send it.
+          </p>
+          <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-faint">
+            <a href="#privacy" className="font-semibold transition-colors hover:text-ink">
+              Privacy
+            </a>
+            <span aria-hidden className="h-3 w-px bg-navy-700" />
+            <a href="#terms" className="font-semibold transition-colors hover:text-ink">
+              Terms &amp; disclaimer
+            </a>
           </p>
         </div>
       </footer>
