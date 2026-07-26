@@ -3,7 +3,8 @@ import { Field } from './Field'
 import { SAMPLE_RESUME } from '../data/samples'
 import { extractText, UnsupportedFileError } from '../lib/parseFile'
 import { isImageFile, runOcr } from '../lib/ocr'
-import { UploadIcon, CameraIcon, LockIcon, ArrowRightIcon, DocIcon } from './Icon'
+import { UploadIcon, CameraIcon, LockIcon, ArrowRightIcon, DocIcon, InfoIcon } from './Icon'
+import { GuidedIntake } from './GuidedIntake'
 
 const PLACEHOLDERS = [
   'e.g. I was a squad leader in charge of 12 soldiers and $2 million of equipment…',
@@ -30,6 +31,7 @@ export function StepRecord({
   const [dragging, setDragging] = useState(false)
   const [fileName, setFileName] = useState<string | null>(null)
   const [phIndex, setPhIndex] = useState(0)
+  const [guided, setGuided] = useState(false)
   const ready = resume.trim().length > 0
 
   // Rotate the placeholder while the box is empty, for a little life + ideas.
@@ -78,6 +80,21 @@ export function StepRecord({
     resume.length > 70 &&
     [/responsibilities:/i, /requirements:/i, /we are looking for/i, /the ideal candidate/i, /qualifications:/i, /you will\b/i, /about the role/i]
       .filter((re) => re.test(resume)).length >= 2
+
+  // The guided path takes over the step. When it finishes it fills the box
+  // below rather than jumping ahead — they should see what was built in their
+  // name and be able to change it before anything is translated.
+  if (guided) {
+    return (
+      <GuidedIntake
+        onDone={(text) => {
+          onResume(text)
+          setGuided(false)
+        }}
+        onCancel={() => setGuided(false)}
+      />
+    )
+  }
 
   return (
     <div
@@ -139,6 +156,29 @@ export function StepRecord({
           </div>
         </div>
       ) : (
+        <>
+        {/* The path for someone with no résumé at all — listed first because
+            it's the one that unblocks the least-equipped user. */}
+        {!ready && (
+          <button
+            type="button"
+            onClick={() => setGuided(true)}
+            style={{ borderRadius: 12 }}
+            className="flex w-full items-center gap-4 border border-accent/40 bg-accent/[0.06] px-5 py-4 text-left transition-colors hover:border-accent hover:bg-accent/10"
+          >
+            <InfoIcon className="h-5 w-5 shrink-0 text-accent" />
+            <span>
+              <span className="block font-display text-base font-semibold text-ink">
+                No résumé? Build it with me.
+              </span>
+              <span className="mt-0.5 block text-sm text-mute">
+                Tell us your job code — like 11B — and we’ll walk through what you did.
+              </span>
+            </span>
+            <ArrowRightIcon className="ml-auto h-4 w-4 shrink-0 text-accent" />
+          </button>
+        )}
+
         <div className="grid gap-3 sm:grid-cols-2">
           {/* upload */}
           <button
@@ -176,6 +216,7 @@ export function StepRecord({
             <span>Take a picture of a paper copy</span>
           </button>
         </div>
+        </>
       )}
       {fileError && <p className="text-sm font-medium text-accent">{fileError}</p>}
 

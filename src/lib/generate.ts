@@ -1,5 +1,6 @@
-import type { TranslateRequest, TranslateResult } from './types'
+import type { MosProfile, TranslateRequest, TranslateResult } from './types'
 import { MOCK_RESULT } from './mock'
+import { fallbackDuties, lookupMos, normalizeCode } from './mos'
 
 // The Supabase Edge Function URL. Set VITE_TRANSLATE_URL in .env.local to point
 // at your deployed function, e.g.
@@ -13,6 +14,10 @@ const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined
 const REPHRASE_URL =
   (import.meta.env.VITE_REPHRASE_URL as string | undefined) ??
   (TRANSLATE_URL ? TRANSLATE_URL.replace(/\/translate\b/, '/rephrase') : undefined)
+// Same trick for the role-lookup function used by the guided intake.
+const SUGGEST_URL =
+  (import.meta.env.VITE_SUGGEST_URL as string | undefined) ??
+  (TRANSLATE_URL ? TRANSLATE_URL.replace(/\/translate\b/, '/suggest') : undefined)
 
 export const isMockMode = !TRANSLATE_URL
 
@@ -86,13 +91,19 @@ export async function translate(
 }
 
 /**
- * Get 3 alternative phrasings for a single bullet. Uses a light client-side
- * rewrite in mock mode so the feature is explorable with no backend.
+ * Get 3 alternative phrasings for a single bullet. `instruction` carries the
+ * user's own steer — "shorter", "say more about the leadership part" — so
+ * rephrasing is a conversation rather than a dice roll. Uses a light
+ * client-side rewrite in mock mode so the feature is explorable with no backend.
  */
-export async function rephrase(bullet: string, jobDescription: string): Promise<string[]> {
+export async function rephrase(
+  bullet: string,
+  jobDescription: string,
+  instruction?: string,
+): Promise<string[]> {
   if (!REPHRASE_URL) {
     await new Promise((r) => setTimeout(r, 700))
-    return mockRephrase(bullet)
+    return mockRephrase(bullet, instruction)
   }
   const res = await fetch(REPHRASE_URL, {
     method: 'POST',
@@ -100,7 +111,7 @@ export async function rephrase(bullet: string, jobDescription: string): Promise<
       'Content-Type': 'application/json',
       ...(ANON_KEY ? { Authorization: `Bearer ${ANON_KEY}`, apikey: ANON_KEY } : {}),
     },
-    body: JSON.stringify({ bullet, jobDescription }),
+    body: JSON.stringify({ bullet, jobDescription, instruction }),
   })
   if (!res.ok) throw new Error(`Rephrase failed (${res.status})`)
   const data = (await res.json()) as { alternatives?: string[] }
@@ -108,13 +119,88 @@ export async function rephrase(bullet: string, jobDescription: string): Promise<
 }
 
 /** Deterministic client-side variants for demo mode. */
-function mockRephrase(bullet: string): string[] {
+function mockRephrase(bullet: string, instruction?: string): string[] {
   const body = bullet.replace(/^[A-Z][a-z]+ /, '').replace(/\.$/, '')
+  const lower = body.charAt(0).toLowerCase() + body.slice(1)
+  // Demo mode can't actually reason about the instruction, but it should show
+  // that the instruction was received rather than silently ignoring it.
+  if (instruction?.trim()) {
+    const note = instruction.trim().replace(/\.$/, '')
+    return [
+      `Directed ${lower} — ${note}.`,
+      `Owned ${lower}, with ${note}.`,
+      `Delivered ${lower} (${note}).`,
+    ]
+  }
   return [
-    `Directed ${body.charAt(0).toLowerCase() + body.slice(1)}.`,
-    `Owned and executed ${body.charAt(0).toLowerCase() + body.slice(1)}.`,
-    `Recognized for ${body.charAt(0).toLowerCase() + body.slice(1)}.`,
+    `Directed ${lower}.`,
+    `Owned and executed ${lower}.`,
+    `Recognized for ${lower}.`,
   ]
+}
+
+/**
+ * Identify a military job from whatever the user typed and offer duties they
+ * can confirm. Local seed first (instant, works offline, and only contains
+ * codes we're sure of); the model fills the long tail.
+ *
+ * Whatever comes back is a *proposal* — the UI makes the user confirm the role
+ * and tick individual duties, so nothing enters their résumé unaffirmed.
+ */
+export async function suggestRole(query: string): Promise<MosProfile> {
+  const local = lookupMos(query)
+  if (local?.confidence === 'high') return local
+
+  if (SUGGEST_URL) {
+    try {
+      const res = await fetch(SUGGEST_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(ANON_KEY ? { Authorization: `Bearer ${ANON_KEY}`, apikey: ANON_KEY } : {}),
+        },
+        body: JSON.stringify({ query }),
+      })
+      if (res.ok) {
+        const data = (await res.json()) as Partial<MosProfile>
+        if (data.title && Array.isArray(data.duties) && data.duties.length) {
+          return {
+            code: data.code || normalizeCode(query),
+            title: data.title,
+            branch: data.branch ?? '',
+            // The model is never treated as certain — the UI always asks.
+            confidence: data.confidence === 'high' ? 'high' : 'low',
+            duties: data.duties,
+          }
+        }
+      }
+    } catch {
+      /* fall through to whatever we can offer locally */
+    }
+  }
+
+  if (local) return local
+  return {
+    code: query.trim(),
+    title: '',
+    branch: '',
+    confidence: 'low',
+    duties: fallbackDuties(),
+  }
+}
+
+/** Turn confirmed duties into the experience text the translator consumes. */
+export function composeExperience(
+  role: { title: string; code: string; branch: string },
+  duties: { duty: string; detail: string }[],
+): string {
+  const heading = [role.title || role.code, role.branch && `(${role.branch})`]
+    .filter(Boolean)
+    .join(' ')
+  const lines = duties.map(({ duty, detail }) =>
+    detail.trim() ? `- ${duty} — ${detail.trim()}` : `- ${duty}`,
+  )
+  return [heading && `Role: ${heading}`, '', ...lines].filter((l) => l !== undefined).join('\n').trim()
 }
 
 /** Simulate a stream so mock mode exercises the same progressive-reveal path. */

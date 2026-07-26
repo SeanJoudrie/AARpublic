@@ -11,7 +11,7 @@ export function BulletCard({
 }: {
   bullet: Bullet
   index: number
-  onRephrase: (bullet: string) => Promise<string[]>
+  onRephrase: (bullet: string, instruction?: string) => Promise<string[]>
 }) {
   const [copied, setCopied] = useState(false)
   const [open, setOpen] = useState(false)
@@ -19,13 +19,15 @@ export function BulletCard({
   const [text, setText] = useState(bullet.translated)
   const [alts, setAlts] = useState<string[] | null>(null)
   const [rephrasing, setRephrasing] = useState(false)
+  const [steering, setSteering] = useState(false)
+  const [instruction, setInstruction] = useState('')
   const edited = text.trim() !== bullet.translated.trim()
 
-  const doRephrase = async () => {
+  const doRephrase = async (note?: string) => {
     setRephrasing(true)
     setAlts(null)
     try {
-      setAlts(await onRephrase(text))
+      setAlts(await onRephrase(text, note))
     } catch {
       setAlts([])
     } finally {
@@ -80,37 +82,68 @@ export function BulletCard({
         </button>
       </div>
 
-      <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 pl-6">
-        {bullet.keywords.length > 0 && (
-          <ul className="flex flex-wrap gap-1.5">
-            {bullet.keywords.map((k) => (
-              <li key={k} className="token border-navy-700 bg-navy-850 text-steel">
-                {k}
-              </li>
-            ))}
-          </ul>
-        )}
-        {edited && <span className="text-xs font-medium text-accent/80">edited</span>}
-        <button
-          onClick={() => setEditing((v) => !v)}
-          className="text-xs font-semibold text-faint transition-colors hover:text-mute"
-        >
+      {bullet.keywords.length > 0 && (
+        <ul className="mt-3 flex flex-wrap gap-1.5 pl-6">
+          {bullet.keywords.map((k) => (
+            <li key={k} className="token border-navy-700 bg-navy-850 text-steel">
+              {k}
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {/* Actions are buttons, not text links — these do things, and a link
+          that performs an action reads as a footnote. */}
+      <div className="mt-3 flex flex-wrap items-center gap-2 pl-6">
+        <button onClick={() => setEditing((v) => !v)} className="btn btn-ghost px-2.5 py-1 text-xs">
           {editing ? 'Done' : 'Edit'}
         </button>
         <button
-          onClick={doRephrase}
+          onClick={() => doRephrase()}
           disabled={rephrasing}
-          className="text-xs font-semibold text-faint transition-colors hover:text-mute disabled:opacity-50"
+          className="btn btn-ghost px-2.5 py-1 text-xs disabled:opacity-50"
         >
-          {rephrasing ? 'Rephrasing…' : 'Rephrase'}
+          {rephrasing ? 'Rewording…' : 'Reword'}
         </button>
         <button
-          onClick={() => setOpen((v) => !v)}
-          className="text-xs font-semibold text-faint transition-colors hover:text-mute"
+          onClick={() => setSteering((v) => !v)}
+          disabled={rephrasing}
+          className="btn btn-ghost px-2.5 py-1 text-xs disabled:opacity-50"
         >
+          Reword with a note
+        </button>
+        <button onClick={() => setOpen((v) => !v)} className="btn btn-ghost px-2.5 py-1 text-xs">
           {open ? 'Hide original' : 'Show original'}
         </button>
+        {edited && <span className="text-xs font-medium text-accent/80">edited</span>}
       </div>
+
+      {/* Steering: say what to change instead of re-rolling and hoping. */}
+      {steering && (
+        <div className="mt-3 flex flex-wrap gap-2 pl-6">
+          <label htmlFor={`note-${index}`} className="sr-only">
+            Tell us what to change about this line
+          </label>
+          <input
+            id={`note-${index}`}
+            autoFocus
+            value={instruction}
+            onChange={(e) => setInstruction(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && instruction.trim()) doRephrase(instruction)
+            }}
+            placeholder="e.g. shorter · say more about leading people · less military-sounding"
+            className="min-w-0 flex-1 rounded-lg border border-navy-700 bg-navy-900/60 px-3 py-2 text-sm text-ink placeholder:text-faint focus:border-accent focus:outline-none"
+          />
+          <button
+            onClick={() => doRephrase(instruction)}
+            disabled={!instruction.trim() || rephrasing}
+            className="btn btn-primary px-3.5 py-2 text-xs"
+          >
+            {rephrasing ? 'Rewording…' : 'Reword'}
+          </button>
+        </div>
+      )}
 
       {alts && (
         <div className="mt-3 space-y-1.5 pl-6">
@@ -118,7 +151,7 @@ export function BulletCard({
             <p className="text-xs text-accent">Couldn’t fetch alternatives — try again.</p>
           ) : (
             <>
-              <p className="label">Pick a rewrite</p>
+              <p className="label">Pick a rewrite {instruction.trim() && `· “${instruction.trim()}”`}</p>
               {alts.map((a, i) => (
                 <button
                   key={i}

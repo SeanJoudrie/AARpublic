@@ -32,7 +32,7 @@ export function ResultPanel({
   error: string | null
   progress: string[]
   onRetry: () => void
-  onRephrase: (bullet: string) => Promise<string[]>
+  onRephrase: (bullet: string, instruction?: string) => Promise<string[]>
   jobTitle: string
 }) {
   const headingRef = useRef<HTMLHeadingElement>(null)

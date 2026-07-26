@@ -184,7 +184,7 @@ export function App() {
               error={error}
               progress={progress}
               onRetry={onSubmit}
-              onRephrase={(bullet) => rephrase(bullet, jobDescription)}
+              onRephrase={(bullet, instruction) => rephrase(bullet, jobDescription, instruction)}
               jobTitle={jobDescription.split('\n').map((l) => l.trim()).find(Boolean) ?? ''}
             />
           </div>

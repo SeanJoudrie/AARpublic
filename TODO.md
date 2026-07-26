@@ -26,6 +26,15 @@ None of it has run against a live Supabase + Claude deployment. Before trusting 
       token and passes a real one.
 
 ## 2. Deferred features (product roadmap)
+- [x] **Guided intake ("Build it with me")** — for users with no résumé at all: type an MOS
+      (or describe the job), confirm the role we identified, tick the duties that actually
+      applied, add your own numbers. Feeds the normal translate pipeline.
+      `src/components/GuidedIntake.tsx`, `src/lib/mos.ts`, `supabase/functions/suggest/`.
+      Still to do: widen the seed dictionary in `mos.ts` (currently ~30 codes, high
+      confidence only), and test the model path for the long tail once the backend is live —
+      a wrong job identification is the worst failure this app can have.
+- [x] **Reword with a note** — per-bullet rephrase now takes an instruction ("shorter",
+      "less military-sounding") instead of re-rolling blindly.
 - [ ] **Accounts + saved history** — the `runs` table + RLS already exist; wire Supabase
       Auth + a history sidebar. Biggest logical next feature.
 - [ ] **Semantic keyword match** — `requirement_embeddings` (pgvector) table is scaffolded;
