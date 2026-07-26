@@ -3,7 +3,8 @@ import { Field } from './Field'
 import { SAMPLE_RESUME } from '../data/samples'
 import { extractText, UnsupportedFileError } from '../lib/parseFile'
 import { isImageFile, runOcr } from '../lib/ocr'
-import { UploadIcon, CameraIcon, LockIcon, ArrowRightIcon, DocIcon } from './Icon'
+import { UploadIcon, CameraIcon, LockIcon, ArrowRightIcon, DocIcon, InfoIcon } from './Icon'
+import { GuidedIntake } from './GuidedIntake'
 
 const PLACEHOLDERS = [
   'e.g. I was a squad leader in charge of 12 soldiers and $2 million of equipment…',
@@ -30,6 +31,7 @@ export function StepRecord({
   const [dragging, setDragging] = useState(false)
   const [fileName, setFileName] = useState<string | null>(null)
   const [phIndex, setPhIndex] = useState(0)
+  const [guided, setGuided] = useState(false)
   const ready = resume.trim().length > 0
 
   // Rotate the placeholder while the box is empty, for a little life + ideas.
@@ -79,6 +81,21 @@ export function StepRecord({
     [/responsibilities:/i, /requirements:/i, /we are looking for/i, /the ideal candidate/i, /qualifications:/i, /you will\b/i, /about the role/i]
       .filter((re) => re.test(resume)).length >= 2
 
+  // The guided path takes over the step. When it finishes it fills the box
+  // below rather than jumping ahead — they should see what was built in their
+  // name and be able to change it before anything is translated.
+  if (guided) {
+    return (
+      <GuidedIntake
+        onDone={(text) => {
+          onResume(text)
+          setGuided(false)
+        }}
+        onCancel={() => setGuided(false)}
+      />
+    )
+  }
+
   return (
     <div
       className={`fade-up space-y-6 rounded-2xl transition-colors ${dragging ? 'outline-2 outline-dashed outline-accent/60 outline-offset-8' : ''}`}
@@ -96,7 +113,7 @@ export function StepRecord({
       }}
     >
       <div>
-        <h2 className="font-display text-2xl font-bold text-ink sm:text-3xl">
+        <h2 className="font-display text-xl font-semibold text-ink">
           First, tell us about your service.
         </h2>
         <p className="mt-2 text-mute">
@@ -125,9 +142,9 @@ export function StepRecord({
       />
 
       {busy ? (
-        <div className="border border-navy-700 bg-navy-900/50 px-5 py-7 text-center" style={{ borderRadius: 12 }}>
+        <div className="border border-edge bg-surface px-5 py-7 text-center" style={{ borderRadius: 12 }}>
           <p className="text-sm font-semibold text-steel">{busy}</p>
-          <div className="mx-auto mt-4 h-1 w-full max-w-xs overflow-hidden rounded-full bg-navy-800">
+          <div className="mx-auto mt-4 h-1 w-full max-w-xs overflow-hidden rounded-full bg-rule">
             {ocrPct !== null ? (
               <div
                 className="h-full rounded-full bg-accent transition-all"
@@ -139,6 +156,29 @@ export function StepRecord({
           </div>
         </div>
       ) : (
+        <>
+        {/* The path for someone with no résumé at all — listed first because
+            it's the one that unblocks the least-equipped user. */}
+        {!ready && (
+          <button
+            type="button"
+            onClick={() => setGuided(true)}
+            style={{ borderRadius: 12 }}
+            className="flex w-full items-center gap-4 border border-accent/40 bg-accent/[0.06] px-5 py-4 text-left transition-colors hover:border-accent hover:bg-accent/10"
+          >
+            <InfoIcon className="h-5 w-5 shrink-0 text-accent" />
+            <span>
+              <span className="block text-base font-semibold text-ink">
+                No résumé? Build it with me.
+              </span>
+              <span className="mt-0.5 block text-sm text-mute">
+                Tell us your job code — like 11B — and we’ll walk through what you did.
+              </span>
+            </span>
+            <ArrowRightIcon className="ml-auto h-4 w-4 shrink-0 text-accent" />
+          </button>
+        )}
+
         <div className="grid gap-3 sm:grid-cols-2">
           {/* upload */}
           <button
@@ -156,11 +196,11 @@ export function StepRecord({
             onClick={() => fileRef.current?.click()}
             style={{ borderRadius: 12 }}
             className={`flex flex-col items-center gap-2 border px-4 py-6 text-center text-sm transition-colors ${
-              dragging ? 'border-accent bg-accent/5 text-ink' : 'border-navy-700 text-mute hover:border-steel'
+              dragging ? 'border-accent bg-accent/5 text-ink' : 'border-rule-strong text-mute hover:border-steel'
             }`}
           >
             <UploadIcon className="h-6 w-6 text-steel" />
-            <span className="font-display text-base font-semibold text-ink">Upload a file</span>
+            <span className="text-base font-semibold text-ink">Upload a file</span>
             <span>PDF, Word, or text — drop or click</span>
           </button>
 
@@ -169,18 +209,19 @@ export function StepRecord({
             type="button"
             onClick={() => cameraRef.current?.click()}
             style={{ borderRadius: 12 }}
-            className="flex flex-col items-center gap-2 border border-navy-700 px-4 py-6 text-center text-sm text-mute transition-colors hover:border-steel"
+            className="flex flex-col items-center gap-2 border border-rule-strong px-4 py-6 text-center text-sm text-mute transition-colors hover:border-steel"
           >
             <CameraIcon className="h-6 w-6 text-steel" />
-            <span className="font-display text-base font-semibold text-ink">Scan a photo</span>
+            <span className="text-base font-semibold text-ink">Scan a photo</span>
             <span>Take a picture of a paper copy</span>
           </button>
         </div>
+        </>
       )}
       {fileError && <p className="text-sm font-medium text-accent">{fileError}</p>}
 
       {fileName && !busy && (
-        <div className="flex items-center gap-2 rounded-lg border border-navy-700 bg-navy-900/50 px-3 py-2 text-sm">
+        <div className="flex items-center gap-2 rounded-lg border border-edge bg-surface px-3 py-2 text-sm">
           <DocIcon className="h-4 w-4 shrink-0 text-steel" />
           <span className="truncate text-ink">{fileName}</span>
           <span className="text-good">·</span>
@@ -198,9 +239,9 @@ export function StepRecord({
       )}
 
       <div className="flex items-center gap-3 text-xs text-faint">
-        <span className="h-px flex-1 bg-navy-800" />
+        <span className="h-px flex-1 bg-rule" />
         or type it below
-        <span className="h-px flex-1 bg-navy-800" />
+        <span className="h-px flex-1 bg-rule" />
       </div>
 
       <div>
@@ -218,7 +259,7 @@ export function StepRecord({
         />
         <button
           onClick={() => onResume(SAMPLE_RESUME)}
-          className="mt-2 text-xs font-semibold text-steel underline decoration-navy-600 underline-offset-4 transition-colors hover:text-ink hover:decoration-accent"
+          className="btn btn-ghost mt-2 px-3 py-1.5 text-xs"
         >
           Not sure what to write? Fill in an example
         </button>
@@ -232,12 +273,12 @@ export function StepRecord({
       )}
 
       {/* trust badge */}
-      <p className="flex items-center gap-2 border-l-2 border-navy-700 py-1 pl-3 text-xs text-mute">
+      <p className="flex items-center gap-2 border-l-2 border-rule-strong py-1 pl-3 text-xs text-mute">
         <LockIcon className="h-4 w-4 shrink-0 text-faint" />
         Files and photos are read right here on your device. We don’t save or upload your record.
       </p>
 
-      <div className="max-sm:sticky max-sm:bottom-0 max-sm:z-10 max-sm:-mx-5 max-sm:border-t max-sm:border-navy-800 max-sm:bg-navy-950/95 max-sm:px-5 max-sm:py-3 max-sm:backdrop-blur">
+      <div className="max-sm:sticky max-sm:bottom-0 max-sm:z-10 max-sm:-mx-5 max-sm:border-t max-sm:border-rule max-sm:bg-ground/95 max-sm:px-5 max-sm:py-3 max-sm:backdrop-blur">
         <button onClick={onNext} disabled={!ready} className="btn btn-primary w-full px-6 py-3.5">
           Next: the job you want
           <ArrowRightIcon className="h-4 w-4" />

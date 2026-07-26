@@ -26,6 +26,15 @@ None of it has run against a live Supabase + Claude deployment. Before trusting 
       token and passes a real one.
 
 ## 2. Deferred features (product roadmap)
+- [x] **Guided intake ("Build it with me")** — for users with no résumé at all: type an MOS
+      (or describe the job), confirm the role we identified, tick the duties that actually
+      applied, add your own numbers. Feeds the normal translate pipeline.
+      `src/components/GuidedIntake.tsx`, `src/lib/mos.ts`, `supabase/functions/suggest/`.
+      Still to do: widen the seed dictionary in `mos.ts` (currently ~30 codes, high
+      confidence only), and test the model path for the long tail once the backend is live —
+      a wrong job identification is the worst failure this app can have.
+- [x] **Reword with a note** — per-bullet rephrase now takes an instruction ("shorter",
+      "less military-sounding") instead of re-rolling blindly.
 - [ ] **Accounts + saved history** — the `runs` table + RLS already exist; wire Supabase
       Auth + a history sidebar. Biggest logical next feature.
 - [ ] **Semantic keyword match** — `requirement_embeddings` (pgvector) table is scaffolded;
@@ -36,12 +45,38 @@ None of it has run against a live Supabase + Claude deployment. Before trusting 
 - [ ] **Save/share a result link** (needs persistence).
 
 ## 3. Polish items explicitly skipped
+### UI overhaul — Phase 1 (composition) is DONE; Phase 2 (Direction B skin) is next
+See the audit for the reasoning behind each. Phase 1 landed:
+- [x] Two-column shell with a persistent rail — kills the centred-column-in-a-void that
+      left ~300px dead each side on desktop. Rail = stepper + privacy note on steps 1-2,
+      score + jump nav + Edit/Start over on the result.
+- [x] Result screen reordered — the verdict leads and now names the job ("Your result for
+      Operations Manager"); "what to do next" demoted to sit with the export buttons.
+- [x] Every action is a button — per-bullet Edit/Reword/Show original, "Paste from
+      clipboard", "Fill in an example". Underline is for navigation only now.
+- [x] One display voice per screen — step headings dropped a register so they stop
+      competing with the hero.
+- [x] Fixed a real mobile tap failure found while verifying: the sticky CTA bar on step 2
+      sat on top of the "fill in an example" button.
+- [x] **Phase 2 — Direction B ("The Brief"):** done. Semantic tokens (ground/surface/
+      rule/edge/ink/rail), bone paper ground, Newsreader display + IBM Plex Sans controls,
+      brass accent derived from the old gold, ink verdict rail. Dark theme rebuilt as the
+      deliberate second via `prefers-color-scheme`, not an inversion. Contrast measured on
+      every token pair in both themes — all pass (4.5:1 text, 3:1 control edges).
+      Type is now self-hosted, so Google Fonts is no longer a third party.
+- [ ] Phase 3 — drop targets with a real boundary, camera promoted on mobile, step 2
+      earning its space, text-size control out of the masthead. (The OG card was
+      redrawn in the new language already — a dark card on a paper app was an
+      obvious mismatch on every share.)
 - [ ] **Inline acronym tooltips** on the "Show original" text (glossary panel exists, but
       terms aren't yet dotted-underlined inline where they appear).
 - [ ] **Jargon flag** — warn when a translated bullet still contains military jargon.
 - [ ] **Bullet length cap** — soft warning on runaway paragraph-length bullets.
 - [ ] **Gap-keyword → résumé evidence hover** (needs a data-model addition from the model).
-- [ ] **Full color-contrast audit** (bumped `--color-faint`, but not formally WCAG-checked).
+- [x] **Full colour-contrast audit** — done as part of Phase 2, measured not eyeballed.
+      Fixed four failures it turned up: `faint` and `accent` on the light ground, and
+      control borders in both themes (which is why `--color-edge` exists separately from
+      the decorative hairline rule).
 - [ ] **Full 44px tap-target audit** on every control (did the main ones).
 - [ ] **True offline** — a `vite-plugin-pwa` service worker with versioned precaching for
       the 11 MB OCR assets. Deliberately skipped (naive SW = stale-cache bugs).

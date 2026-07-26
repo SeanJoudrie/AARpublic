@@ -21,7 +21,7 @@ export function Stepper({ step, onJump }: { step: number; onJump: (s: number) =>
               onClick={() => onJump(n)}
               aria-label={`Step ${n}: ${label}`}
               className={`h-1.5 flex-1 rounded-full transition-colors ${
-                done ? 'cursor-pointer bg-accent/60 hover:bg-accent' : current ? 'bg-accent' : 'bg-navy-700'
+                done ? 'cursor-pointer bg-accent/60 hover:bg-accent' : current ? 'bg-accent' : 'bg-rule-strong'
               }`}
             />
           )

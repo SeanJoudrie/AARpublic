@@ -62,13 +62,13 @@ export function Field({
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={onKeyDown}
         style={{ minHeight: `${rows * 1.6 + 1.5}rem` }}
-        className="w-full resize-none overflow-hidden rounded-xl border border-navy-700 bg-navy-900/60 px-4 py-3 text-sm leading-relaxed text-ink placeholder:text-faint focus:border-accent focus:outline-none"
+        className="w-full resize-none overflow-hidden rounded-xl border border-edge bg-surface px-4 py-3 text-sm leading-relaxed text-ink placeholder:text-faint focus:border-accent focus:outline-none"
       />
       {tools && (
         <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1">
           <button
             onClick={paste}
-            className="text-xs font-semibold text-steel underline decoration-navy-600 underline-offset-4 transition-colors hover:text-ink hover:decoration-accent"
+            className="btn btn-ghost px-3 py-1.5 text-xs"
           >
             Paste from clipboard
           </button>

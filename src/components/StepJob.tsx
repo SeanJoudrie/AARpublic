@@ -27,7 +27,7 @@ export function StepJob({
   return (
     <div className="fade-up space-y-6">
       <div>
-        <h2 className="flex items-center gap-2 font-display text-2xl font-bold text-ink sm:text-3xl">
+        <h2 className="flex items-center gap-2 font-display text-xl font-semibold text-ink">
           Now, the job you’re going for.
           <InfoTip label="A job description is the posting from the company — the list of what the role does and what they’re looking for. Copy it from LinkedIn, Indeed, or the company’s site and paste it here." />
         </h2>
@@ -51,10 +51,14 @@ export function StepJob({
         />
         <button
           onClick={() => onJobDescription(SAMPLE_JD)}
-          className="mt-2 text-xs font-semibold text-steel underline decoration-navy-600 underline-offset-4 transition-colors hover:text-ink hover:decoration-accent"
+          className="btn btn-ghost mt-2 scroll-mb-28 px-3 py-1.5 text-xs"
         >
           Want to see what one looks like? Fill in an example
         </button>
+        {/* Slack so the pinned mobile CTA below can never sit on top of this
+            button — a sticky bar that covers a control is a real tap failure,
+            not just a visual one. */}
+        <div aria-hidden className="h-16 sm:hidden" />
       </div>
 
       {turnstileEnabled && (
@@ -64,7 +68,7 @@ export function StepJob({
         </div>
       )}
 
-      <div className="space-y-2 max-sm:sticky max-sm:bottom-0 max-sm:z-10 max-sm:-mx-5 max-sm:border-t max-sm:border-navy-800 max-sm:bg-navy-950/95 max-sm:px-5 max-sm:py-3 max-sm:backdrop-blur">
+      <div className="space-y-2 max-sm:sticky max-sm:bottom-0 max-sm:z-10 max-sm:-mx-5 max-sm:border-t max-sm:border-rule max-sm:bg-ground/95 max-sm:px-5 max-sm:py-3 max-sm:backdrop-blur">
         <div className="flex items-center gap-3">
           <button onClick={onBack} className="btn btn-ghost px-5 py-3.5">
             <ArrowLeftIcon className="h-4 w-4" />

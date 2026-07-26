@@ -4,8 +4,8 @@
   "description": "Turn your military experience into a civilian résumé, targeted to the job you want.",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#0a1019",
-  "theme_color": "#0a1019",
+  "background_color": "#e9eae6",
+  "theme_color": "#e9eae6",
   "icons": [
     {
       "src": "icon.svg",

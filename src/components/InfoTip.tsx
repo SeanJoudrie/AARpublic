@@ -29,7 +29,7 @@ export function InfoTip({ label }: { label: string }) {
       {open && (
         <span
           role="tooltip"
-          className="absolute left-1/2 top-full z-30 mt-2 w-56 -translate-x-1/2 rounded-lg border border-navy-600 bg-navy-800 px-3 py-2 text-xs font-normal normal-case leading-relaxed tracking-normal text-ink shadow-xl"
+          className="absolute left-1/2 top-full z-30 mt-2 w-56 -translate-x-1/2 rounded-lg border border-rule-strong bg-rule px-3 py-2 text-xs font-normal normal-case leading-relaxed tracking-normal text-ink shadow-xl"
         >
           {label}
         </span>

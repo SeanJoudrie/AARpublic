@@ -45,7 +45,7 @@ export function Legal({ section, onBack }: { section: LegalSection; onBack: () =
         {section === 'privacy' ? <Privacy headingRef={headingRef} /> : <Terms headingRef={headingRef} />}
       </div>
 
-      <p className="mt-12 border-t border-navy-800/70 pt-5 text-sm text-faint">
+      <p className="mt-12 border-t border-rule pt-5 text-sm text-faint">
         {section === 'privacy' ? (
           <>
             Also see the{' '}
@@ -145,9 +145,10 @@ function Privacy({ headingRef }: { headingRef: React.Ref<HTMLHeadingElement> }) 
 
         <Part num="05" title="The other services a page load touches">
           <p>
-            Fonts are loaded from Google Fonts, so Google sees the request the way it sees any web-font
-            request. If human-verification is switched on, Cloudflare Turnstile runs a bot check — it
-            sees that check, not your text.
+            Almost none. The fonts and the photo-scanning engine are served from this app rather than
+            from anyone else's network, so a page load doesn't tell a third party you were here. If
+            human-verification is switched on, Cloudflare Turnstile runs a bot check — it sees that
+            check, not your text.
           </p>
         </Part>
 

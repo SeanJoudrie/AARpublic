@@ -59,11 +59,17 @@ supabase link --project-ref <your-project-ref>
 supabase secrets set ANTHROPIC_API_KEY=sk-ant-...
 supabase functions deploy translate --no-verify-jwt
 supabase functions deploy rephrase --no-verify-jwt
+supabase functions deploy suggest --no-verify-jwt
 ```
 
-(The `rephrase` function powers the per-bullet "Rephrase" button and shares the
-`_shared/security.ts` gate. The client finds it automatically next to `translate`, or set
-`VITE_REPHRASE_URL` to override.)
+(`rephrase` powers the per-bullet "Reword" button; `suggest` powers the guided intake —
+identifying a job code and offering duties to confirm. Both share the
+`_shared/security.ts` gate, and the client finds them automatically next to `translate`.
+Override with `VITE_REPHRASE_URL` / `VITE_SUGGEST_URL` if they live elsewhere.)
+
+**Guided intake works without `suggest` deployed.** `src/lib/mos.ts` holds a small seed of
+codes we're confident about, so demo mode and the common cases resolve instantly and
+offline; the edge function only covers the long tail.
 
 `--no-verify-jwt` makes the function callable without a logged-in user. Drop it once you
 add Supabase Auth.
@@ -143,7 +149,9 @@ exact 1200×630 viewport (the file's header comment has the command).
 
 ## Stack
 
-React 19 · Vite 6 · TypeScript · Tailwind v4 · Supabase Edge Functions (Deno) ·
+React 19 · Vite 6 · TypeScript · Tailwind v4 ("The Brief" design system — semantic
+tokens, light-first with a deliberate dark theme) · self-hosted Newsreader + IBM Plex Sans ·
+Supabase Edge Functions (Deno) ·
 Claude (`claude-opus-5`, streaming) · pdf.js + mammoth (upload) · Tesseract.js (on-device
 photo OCR, self-hosted) · docx + jsPDF (export).
 
@@ -156,15 +164,18 @@ src/
     types.ts               # the JSON contract (source of truth)
     generate.ts            # streaming client; falls back to mock when no backend
     mock.ts                # canned demo result
+    mos.ts                 # seed of military job codes + duty sets (guided intake)
     parseFile.ts           # PDF/DOCX/TXT -> text, in-browser (lazy-loaded)
     exportDoc.ts           # copy-all + DOCX/PDF export (lazy-loaded)
   components/               # MatchScore, KeywordChips, BulletCard, StarPrep, panels
+                            # GuidedIntake.tsx = "Build it with me" (no résumé needed)
                             # Legal.tsx = the #privacy / #terms pages
   data/samples.ts          # example résumé + JD
 design/og-card.html        # source for the 1200×630 social card
 supabase/
   functions/translate/     # Deno edge function → Claude (key server-side)
-  functions/rephrase/      # single-bullet rephrase → Claude
+  functions/rephrase/      # single-bullet reword, with optional user instruction
+  functions/suggest/       # job-code lookup + duty suggestions for guided intake
   functions/_shared/       # security.ts (IP rate limit + Turnstile), shared
   schema.sql               # pgvector-ready schema for stretch goals
 ```
@@ -172,7 +183,10 @@ supabase/
 ## Note on honesty
 
 AAR never invents metrics the source doesn't support, and every bullet shows its
-original + a rationale. Treat the output as a strong first draft to review — not a
+original + a rationale. The guided intake follows the same rule from the other direction:
+it *proposes* duties common to a job and the user affirms them one by one, the role
+identification is always confirmed by the user (a wrong job is the worst error this app
+can make), and every number in the output was typed by the person it belongs to. Treat the output as a strong first draft to review — not a
 final résumé.
 
 The [privacy note](./src/components/Legal.tsx) (`#privacy`) and terms (`#terms`) describe

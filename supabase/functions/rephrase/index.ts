@@ -18,6 +18,8 @@ const CORS = {
 
 const SYSTEM = `You rewrite a single civilian résumé bullet into 3 alternative phrasings, each tuned to the given job description. Keep every claim truthful to the input — never invent numbers or achievements. Vary the emphasis and the opening action verb across the three. Each must be one concise line.
 
+If the user includes an INSTRUCTION, it outranks your own judgement about emphasis and style — follow it in all three alternatives, while still never adding a fact the bullet doesn't already contain.
+
 Return ONLY a JSON object: { "alternatives": [string, string, string] }`
 
 function json(body: unknown, status = 200) {
@@ -31,7 +33,7 @@ Deno.serve(async (req: Request) => {
   const apiKey = Deno.env.get('ANTHROPIC_API_KEY')
   if (!apiKey) return json({ error: 'ANTHROPIC_API_KEY is not set' }, 500)
 
-  let payload: { bullet?: string; jobDescription?: string; turnstileToken?: string }
+  let payload: { bullet?: string; jobDescription?: string; instruction?: string; turnstileToken?: string }
   try {
     payload = await req.json()
   } catch {
@@ -40,6 +42,8 @@ Deno.serve(async (req: Request) => {
 
   const bullet = (payload.bullet ?? '').trim()
   const jobDescription = (payload.jobDescription ?? '').trim()
+  // The user's own steer — "shorter", "say more about leading people".
+  const instruction = (payload.instruction ?? '').trim().slice(0, 400)
   if (!bullet) return json({ error: 'A bullet is required.' }, 400)
   if (bullet.length > 2000) return json({ error: 'Bullet too long.' }, 413)
 
@@ -59,7 +63,9 @@ Deno.serve(async (req: Request) => {
       messages: [
         {
           role: 'user',
-          content: `JOB DESCRIPTION:\n${jobDescription}\n\nCURRENT BULLET:\n${bullet}\n\nReturn the JSON now.`,
+          content: `JOB DESCRIPTION:\n${jobDescription}\n\nCURRENT BULLET:\n${bullet}${
+            instruction ? `\n\nINSTRUCTION FROM THE USER:\n${instruction}` : ''
+          }\n\nReturn the JSON now.`,
         },
       ],
     })

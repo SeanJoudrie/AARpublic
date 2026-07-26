@@ -40,6 +40,37 @@ export interface TranslateResult {
   starAnswers: StarAnswer[]
 }
 
+/**
+ * A military job, as identified from whatever the user typed ("14B", "I was a
+ * squad leader", "68 whiskey").
+ *
+ * `duties` are things people in this role COMMONLY did — never assertions
+ * about this particular person. The UI asks them to tick what actually applies,
+ * and any number in the final résumé comes from the user, never from us.
+ */
+export interface MosProfile {
+  /** The code or description, normalized ("11B"). */
+  code: string
+  /** Plain-language job title ("Infantryman"). */
+  title: string
+  /** Service branch, when known. */
+  branch: string
+  /**
+   * 'high' when we matched a code we're sure about; 'low' when it's inferred.
+   * Low confidence makes the UI ask the user to confirm before going further.
+   */
+  confidence: 'high' | 'low'
+  /** Duty statements to offer for selection. */
+  duties: string[]
+}
+
+/** One duty the user confirmed they did, with any detail they chose to add. */
+export interface ConfirmedDuty {
+  duty: string
+  /** Free text from the user — headcounts, dollar values, specifics. Optional. */
+  detail: string
+}
+
 /** What the UI sends to the edge function. */
 export interface TranslateRequest {
   /** Raw military résumé / experience text. */
