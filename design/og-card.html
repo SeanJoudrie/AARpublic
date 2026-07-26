@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <!--
+    Source for public/og.png — the 1200x630 social preview card.
+    Regenerate after editing (any headless Chromium works; screenshot at an
+    exact 1200x630 viewport, not fullPage):
+
+      npx playwright screenshot --viewport-size=1200,630 \
+        design/og-card.html public/og.png
+
+    Keep it in the "Dossier" language: no emoji, one gold accent, hairline
+    rules, numbered 01/02/03 sections.
+  -->
+  <head>
+    <meta charset="utf-8" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@700;800&family=Inter:wght@500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1200px; height: 630px; }
+      body {
+        background: radial-gradient(120% 80% at 50% -10%, #101a2b 0%, #0a1019 60%);
+        color: #f4f1e8;
+        font-family: 'Inter', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        position: relative;
+        overflow: hidden;
+      }
+      .rail { position: absolute; inset: 0 0 auto 0; height: 4px; background: #f2b134; }
+      .frame {
+        position: absolute;
+        inset: 60px 64px 56px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Masthead */
+      .mast { display: flex; align-items: center; gap: 14px; }
+      .tile {
+        width: 46px; height: 46px; border-radius: 10px;
+        background: #f2b134; color: #0a1019;
+        font-family: 'Hanken Grotesk', sans-serif; font-weight: 800; font-size: 15px;
+        display: flex; align-items: center; justify-content: center;
+        letter-spacing: 0.01em;
+      }
+      .wordmark { font-size: 19px; font-weight: 600; color: #f4f1e8; letter-spacing: -0.01em; }
+      .mast .sep { width: 1px; height: 20px; background: #24334d; }
+      .mast .sub { font-size: 17px; color: #a7b0c0; }
+
+      /* Eyebrow — mirrors the app's hero: MILITARY —— CIVILIAN */
+      .eyebrow { margin-top: 104px; display: flex; align-items: center; gap: 14px; }
+      .label {
+        font-size: 13px; font-weight: 600;
+        letter-spacing: 0.16em; text-transform: uppercase;
+        color: #7a8598;
+      }
+      .label.gold { color: #f2b134; }
+      .eyebrow .dash { width: 34px; height: 1px; background: #f2b134; }
+
+      h1 {
+        margin-top: 22px;
+        font-family: 'Hanken Grotesk', sans-serif;
+        font-weight: 800;
+        font-size: 63px;
+        line-height: 1.08;
+        letter-spacing: -0.02em;
+        color: #fbf9f3;
+        max-width: 930px;
+      }
+      h1 em { font-style: normal; color: #f2b134; }
+
+      .deck {
+        margin-top: 24px;
+        font-size: 22px;
+        line-height: 1.45;
+        color: #a7b0c0;
+        max-width: 790px;
+      }
+
+      /* Numbered footer sections — the app's 01 / 02 / 03 language */
+      .sections {
+        margin-top: auto;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0;
+        border-top: 1px solid #24334d;
+        padding-top: 18px;
+      }
+      .sec { display: flex; align-items: baseline; gap: 10px; }
+      .num {
+        font-family: 'Hanken Grotesk', sans-serif;
+        font-weight: 800; font-size: 14px; letter-spacing: 0.05em;
+        color: #f2b134;
+      }
+      .sec .txt { font-size: 18px; font-weight: 500; color: #f4f1e8; }
+    </style>
+  </head>
+  <body>
+    <div class="rail"></div>
+    <div class="frame">
+      <div class="mast">
+        <div class="tile">AAR</div>
+        <div class="wordmark">After-Action Resume</div>
+        <div class="sep"></div>
+        <div class="sub">Military-to-civilian résumé translation</div>
+      </div>
+
+      <div class="eyebrow">
+        <span class="label">Military</span>
+        <span class="dash"></span>
+        <span class="label gold">Civilian</span>
+      </div>
+
+      <h1>Turn your service into a résumé that reads like <em>the job you want</em>.</h1>
+
+      <p class="deck">
+        Paste the posting. Get civilian wording, an honest fit score, and your interview
+        answers — without inventing a thing.
+      </p>
+
+      <div class="sections">
+        <div class="sec"><span class="num">01</span><span class="txt">Match score</span></div>
+        <div class="sec"><span class="num">02</span><span class="txt">Keyword gaps</span></div>
+        <div class="sec"><span class="num">03</span><span class="txt">STAR answers</span></div>
+      </div>
+    </div>
+  </body>
+</html>

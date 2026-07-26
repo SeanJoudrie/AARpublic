@@ -1,0 +1,204 @@
+@import 'tailwindcss';
+
+/* ── "Dossier" theme ──────────────────────────────────────────────────────────
+   AAR = After-Action Report, a real military document format. The UI borrows
+   that language: a warm-paper ink on deep navy, one restrained gold accent,
+   hairline rules instead of boxed cards, and numbered sections. Between-the-
+   flags palette (navy + gold + cream), kept of-a-piece with the portfolio. */
+@theme {
+  --color-navy-950: #0a1019;
+  --color-navy-900: #0e1725;
+  --color-navy-850: #121d2f;
+  --color-navy-800: #18243a;
+  --color-navy-700: #24334d;
+  --color-navy-600: #35486a;
+
+  --color-head: #fbf9f3;
+  --color-ink: #f4f1e8;
+  --color-mute: #a7b0c0;
+  --color-faint: #7a8598;
+  --color-accent: #f2b134;
+  --color-accent-soft: #f6c66a;
+  --color-steel: #8bb0de;
+  --color-good: #7fd6a6;
+  --color-low: #e08a6b;
+
+  --font-display: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background:
+    radial-gradient(120% 80% at 50% -10%, #101a2b 0%, var(--color-navy-950) 60%);
+  background-attachment: fixed;
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Gold text selection, matching the accent. */
+::selection {
+  background: color-mix(in srgb, var(--color-accent) 35%, transparent);
+  color: var(--color-head);
+}
+
+/* Themed scrollbar. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-navy-600) transparent;
+}
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-thumb {
+  background: var(--color-navy-600);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+*::-webkit-scrollbar-thumb:hover { background: var(--color-navy-700); }
+
+/* Consistent keyboard focus ring everywhere. */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Skip-to-content link, visible only on focus. */
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -3rem;
+  z-index: 60;
+  background: var(--color-accent);
+  color: var(--color-navy-950);
+  font-weight: 600;
+  padding: 0.5rem 0.9rem;
+  border-radius: 8px;
+  transition: top 0.15s;
+}
+.skip-link:focus { top: 1rem; }
+
+/* Section eyebrow: sparing, paired with a rule — not sprinkled everywhere. */
+.label {
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-faint);
+}
+
+/* Numbered section header, dossier-style: 01 · TITLE with a hairline beneath. */
+.section-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-navy-700) 70%, transparent);
+}
+.section-num {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: var(--color-accent);
+}
+
+/* Buttons — crisp state changes, no float-on-hover. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+}
+.btn-primary {
+  background: var(--color-accent);
+  color: var(--color-navy-950);
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--color-accent-soft);
+}
+/* Clearly-off disabled state — muted navy, not pale gold that reads as active. */
+.btn-primary:disabled {
+  background: var(--color-navy-800);
+  color: var(--color-faint);
+  cursor: not-allowed;
+}
+.btn-ghost {
+  border: 1px solid var(--color-navy-600);
+  color: var(--color-ink);
+}
+.btn-ghost:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+/* Data token — keyword chips read like fields on a form, not marketing pills. */
+.token {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 4px;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border: 1px solid transparent;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-up {
+  animation: fade-up 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Step-to-step transition. */
+@keyframes step-in {
+  from { opacity: 0; transform: translateX(12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.step-in {
+  animation: step-in 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Calm, determinate "scanning" sweep — replaces pulsing ping dots. */
+@keyframes scan {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(300%); }
+}
+.scanbar {
+  position: relative;
+  overflow: hidden;
+}
+.scanbar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 33%;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--color-accent) 55%, transparent), transparent);
+  animation: scan 1.25s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .fade-up, .step-in { animation: none; }
+  .scanbar::after { animation: none; }
+  * { scroll-behavior: auto !important; }
+}
+
+/* Clean print: just the document, no chrome. */
+@media print {
+  body { background: #fff; color: #000; }
+  header, footer, .no-print { display: none !important; }
+  .section-head { border-color: #ccc; }
+  * { color: #000 !important; }
+}

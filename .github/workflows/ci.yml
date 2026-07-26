@@ -1,0 +1,41 @@
+name: CI
+
+# Build on every push and PR so a broken type or import can't sit unnoticed.
+# The build is the test suite for now — `npm run build` runs `tsc -b` first, so
+# a type error fails the job.
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Type-check & build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run build
+
+      # Handy for grabbing a build without running one locally, and it proves
+      # the output is what got type-checked.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+          retention-days: 7
