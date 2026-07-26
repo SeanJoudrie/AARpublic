@@ -12,6 +12,11 @@ export default defineConfig(({ mode }) => {
   const site = (loadEnv(mode, process.cwd(), '').VITE_SITE_URL || '').replace(/\/+$/, '')
 
   return {
+    // Relative base so the build works both at a domain root AND under a
+    // subpath like seanjoudrie.github.io/AARpublic/. Everything that builds a
+    // URL at runtime (the OCR assets in src/lib/ocr.ts) goes through
+    // import.meta.env.BASE_URL, so it follows this automatically.
+    base: './',
     plugins: [
       react(),
       tailwindcss(),
