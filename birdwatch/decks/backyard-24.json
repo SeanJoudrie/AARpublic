@@ -1,0 +1,48 @@
+{
+  "slug": "backyard-24",
+  "name": "Massachusetts Backyard 24",
+  "blurb": "Twenty-four birds you can find from a yard, a sidewalk, or a town park. Start with the eight that come to you, end with two that make a whole spring worth it.",
+
+  "_curation": [
+    "Chosen for habitat and recognisability, not rarity -- every bird here is",
+    "reachable without a scope, a boat, or a 4am drive. Deliberately excluded:",
+    "shorebirds, seabirds, marsh specialists and raptors that need open country.",
+    "",
+    "The list runs a seasonal arc on purpose. The easy end is resident feeder",
+    "birds you can get in January. The middle brings in a winter visitor (junco,",
+    "white-throated sparrow) so the set teaches that some birds only exist here",
+    "in the cold. The hard end is spring-and-summer only -- oriole, hummingbird,",
+    "grosbeak, tanager -- so a January player physically cannot finish, and has",
+    "a reason to still be playing in May.",
+    "",
+    "Cooper's Hawk would belong here but GBIF has no usable Massachusetts",
+    "records for it (see fetch_region.py). Left out rather than faked."
+  ],
+
+  "species": [
+    "Poecile atricapillus",
+    "Cardinalis cardinalis",
+    "Cyanocitta cristata",
+    "Turdus migratorius",
+    "Zenaida macroura",
+    "Spinus tristis",
+    "Baeolophus bicolor",
+    "Dryobates pubescens",
+    "Sitta carolinensis",
+    "Melospiza melodia",
+    "Dumetella carolinensis",
+    "Thryothorus ludovicianus",
+    "Haemorhous mexicanus",
+    "Colaptes auratus",
+    "Junco hyemalis",
+    "Melanerpes carolinus",
+    "Zonotrichia albicollis",
+    "Mimus polyglottos",
+    "Bombycilla cedrorum",
+    "Sialia sialis",
+    "Icterus galbula",
+    "Archilochus colubris",
+    "Pheucticus ludovicianus",
+    "Piranga olivacea"
+  ]
+}

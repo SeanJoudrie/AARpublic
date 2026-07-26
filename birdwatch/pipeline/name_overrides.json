@@ -1,0 +1,29 @@
+{
+  "_comment": [
+    "North American common names for GBIF taxa whose backbone vernacular is",
+    "global, British, or a lumped slash-form. GBIF gets the great majority of",
+    "US bird names right -- of 38 spot-checked common Massachusetts species,",
+    "only Circus cyaneus was wrong -- so this list stays small on purpose.",
+    "",
+    "Slash-forms cannot be resolved automatically: 'Great Blue/Cocoi Heron'",
+    "needs the trailing noun ('Great Blue Heron') while 'Great Cormorant/",
+    "European Shag' must keep its own ('Great Cormorant'). Same shape, opposite",
+    "rule, so each is written out by hand.",
+    "",
+    "Circus cyaneus: GBIF's backbone still lumps Northern Harrier (C. hudsonius)",
+    "into Eurasian Hen Harrier. Every Massachusetts record is a Northern Harrier,",
+    "so for a US regional dataset that is the correct label."
+  ],
+
+  "Ardea herodias": "Great Blue Heron",
+  "Butorides virescens": "Green Heron",
+  "Buteo lineatus": "Red-shouldered Hawk",
+  "Phalacrocorax carbo": "Great Cormorant",
+  "Anser caerulescens": "Snow Goose",
+  "Somateria spectabilis": "King Eider",
+  "Cygnus buccinator": "Trumpeter Swan",
+  "Oceanodroma leucorhoa": "Leach's Storm-Petrel",
+  "Egretta garzetta": "Little Egret",
+  "Circus cyaneus": "Northern Harrier",
+  "Larus smithsonianus": "Herring Gull"
+}
