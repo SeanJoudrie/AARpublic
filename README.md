@@ -182,8 +182,27 @@ database, and the only server-side record is a rate-limit counter keyed on IP th
 dropped after a day. **If that data flow ever changes, update those pages in the same
 commit.**
 
-## CI
+## CI & deployment
 
 [`.github/workflows/ci.yml`](./.github/workflows/ci.yml) runs `npm ci && npm run build`
 (which type-checks first) on every push and PR, and uploads `dist/` as an artifact. There
 are no automated tests yet — the build is the gate.
+
+[`.github/workflows/deploy-pages.yml`](./.github/workflows/deploy-pages.yml) publishes on
+every push to `main`. The live site is **https://seanjoudrie.github.io/AARpublic/**,
+currently running in demo mode.
+
+It deploys by force-pushing `dist/` to the `gh-pages` branch rather than using
+`actions/deploy-pages`. That's deliberate: `actions/deploy-pages` needs the Pages site to
+already exist, and `configure-pages` with `enablement: true` can't create it either —
+it fails with *"Create Pages site: Resource not accessible by integration"*, because the
+Actions token may deploy to Pages but not create the site. Pushing a `gh-pages` branch
+enables Pages by itself. The `.nojekyll` file the workflow adds is **required**: without
+it Jekyll strips the Vite chunks whose filenames start with an underscore
+(`_commonjs-dynamic-modules-*.js`) and the app 404s at runtime.
+
+To switch off demo mode, set `VITE_TRANSLATE_URL` and `VITE_SUPABASE_ANON_KEY` (and
+optionally `VITE_TURNSTILE_SITE_KEY`) as repository **variables** under Settings → Secrets
+and variables → Actions → Variables, then re-run the workflow. They're variables rather
+than secrets because both keys are public by design and get compiled into the client
+bundle. `ANTHROPIC_API_KEY` is never among them — it stays a Supabase secret.
