@@ -1,9 +1,11 @@
 name: Deploy to GitHub Pages
 
-# One-time setup before this can run:
-#   Settings → Pages → Build and deployment → Source: "GitHub Actions".
+# Publishes the built site to the `gh-pages` branch, which GitHub Pages serves
+# without anyone having to configure a Pages source by hand. (The alternative,
+# actions/deploy-pages, requires Settings → Pages → Source: "GitHub Actions" to
+# be set first — this route avoids that dependency entirely.)
 #
-# The site deploys in DEMO MODE until the repository variables below are set
+# The site runs in DEMO MODE until the repository variables below are set
 # (Settings → Secrets and variables → Actions → Variables). They are repository
 # *variables*, not secrets, on purpose: the Supabase anon key and the Turnstile
 # site key are public by design and are compiled into the client bundle. The
@@ -15,18 +17,15 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
-# Let a running deploy finish rather than cancelling it mid-publish.
 concurrency:
   group: pages
   cancel-in-progress: false
 
 jobs:
-  build:
-    name: Build
+  deploy:
+    name: Build & publish
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -36,31 +35,28 @@ jobs:
           node-version: 22
           cache: npm
 
-      - id: pages
-        uses: actions/configure-pages@v5
-
       - run: npm ci
 
       - run: npm run build
         env:
-          # Makes the Open Graph tags absolute — configure-pages resolves this
-          # to the real site URL, custom domain included.
-          VITE_SITE_URL: ${{ steps.pages.outputs.base_url }}
+          # Makes the Open Graph tags absolute so link previews work.
+          VITE_SITE_URL: ${{ vars.VITE_SITE_URL || 'https://seanjoudrie.github.io/AARpublic' }}
           VITE_TRANSLATE_URL: ${{ vars.VITE_TRANSLATE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
           VITE_TURNSTILE_SITE_KEY: ${{ vars.VITE_TURNSTILE_SITE_KEY }}
 
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist
-
-  deploy:
-    name: Deploy
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Publish dist/ to gh-pages
+        run: |
+          set -euo pipefail
+          # Without this, Jekyll drops the Vite chunks whose names start with an
+          # underscore (_commonjsHelpers-*.js) and the app 404s at runtime.
+          touch dist/.nojekyll
+          cd dist
+          git init -q -b gh-pages
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Deploy ${GITHUB_SHA::7}"
+          git push -q --force \
+            "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" \
+            gh-pages
