@@ -63,9 +63,10 @@ export function ResultPanel({
         Translation ready. Match score {result.matchScore} out of 100.
       </div>
 
-      {/* sticky mini-header — appears after scrolling past the score */}
+      {/* Sticky mini-header for small screens. On desktop the rail already
+          carries the score and the jump nav, so this would just duplicate it. */}
       <div
-        className={`no-print sticky top-0 z-20 -mx-1 mb-2 flex items-center gap-3 rounded-b-xl border-b border-navy-700 bg-navy-950 px-3 py-2 transition-all ${
+        className={`no-print sticky top-0 z-20 -mx-1 mb-2 flex items-center gap-3 rounded-b-xl border-b border-navy-700 bg-navy-950 px-3 py-2 transition-all lg:hidden ${
           showMini ? 'opacity-100' : 'pointer-events-none -translate-y-2 opacity-0'
         }`}
       >
@@ -80,12 +81,16 @@ export function ResultPanel({
         </div>
       </div>
 
-      <div>
-        <NextSteps headingRef={headingRef} />
-      </div>
-
-      {/* score + summary — the report's cover sheet */}
+      {/* The verdict leads. This is what they came for — it used to sit below a
+          block of instructions explaining how to use a thing they hadn't seen. */}
       <section ref={scoreRef} className="fade-up border border-navy-700 bg-navy-900/40 p-6" style={{ borderRadius: 14 }}>
+        <h3
+          ref={headingRef}
+          tabIndex={-1}
+          className="mb-5 font-display text-lg font-bold text-ink outline-none"
+        >
+          Your result{jobTitle && <span className="text-mute"> for {jobTitle}</span>}
+        </h3>
         <MatchScore score={result.matchScore} />
         {result.matchScore >= 90 && (
           <p className="mt-4 rounded-lg border border-good/30 bg-good/10 px-3 py-2 text-sm text-good">
@@ -99,6 +104,10 @@ export function ResultPanel({
       </section>
 
       <ExportBar result={result} jobTitle={jobTitle} />
+
+      {/* Demoted to sit with the export buttons, which is the moment the
+          instructions actually become useful. */}
+      <NextSteps />
 
       <Section id="sec-keywords" n="01" title="What this job wants" delay={0} tip="Green = skills your experience already shows. Gold = skills the job asks for that we didn't see yet — good things to add or bring up in an interview.">
         <KeywordChips covered={result.coveredKeywords} missing={result.missingKeywords} />

@@ -45,6 +45,25 @@ None of it has run against a live Supabase + Claude deployment. Before trusting 
 - [ ] **Save/share a result link** (needs persistence).
 
 ## 3. Polish items explicitly skipped
+### UI overhaul — Phase 1 (composition) is DONE; Phase 2 (Direction B skin) is next
+See the audit for the reasoning behind each. Phase 1 landed:
+- [x] Two-column shell with a persistent rail — kills the centred-column-in-a-void that
+      left ~300px dead each side on desktop. Rail = stepper + privacy note on steps 1-2,
+      score + jump nav + Edit/Start over on the result.
+- [x] Result screen reordered — the verdict leads and now names the job ("Your result for
+      Operations Manager"); "what to do next" demoted to sit with the export buttons.
+- [x] Every action is a button — per-bullet Edit/Reword/Show original, "Paste from
+      clipboard", "Fill in an example". Underline is for navigation only now.
+- [x] One display voice per screen — step headings dropped a register so they stop
+      competing with the hero.
+- [x] Fixed a real mobile tap failure found while verifying: the sticky CTA bar on step 2
+      sat on top of the "fill in an example" button.
+- [ ] **Phase 2 — Direction B ("The Brief"):** light ground, Newsreader display, brass
+      accent derived from the existing gold, summary as pull-quote, rationale in the
+      margin. Re-run contrast on every pair; rebuild the dark theme as the deliberate
+      second. Not started.
+- [ ] Phase 3 — drop targets with a real boundary, camera promoted on mobile, step 2
+      earning its space, text-size control out of the masthead, new OG card.
 - [ ] **Inline acronym tooltips** on the "Show original" text (glossary panel exists, but
       terms aren't yet dotted-underlined inline where they appear).
 - [ ] **Jargon flag** — warn when a translated bullet still contains military jargon.

@@ -68,7 +68,7 @@ export function Field({
         <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1">
           <button
             onClick={paste}
-            className="text-xs font-semibold text-steel underline decoration-navy-600 underline-offset-4 transition-colors hover:text-ink hover:decoration-accent"
+            className="btn btn-ghost px-3 py-1.5 text-xs"
           >
             Paste from clipboard
           </button>

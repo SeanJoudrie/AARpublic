@@ -6,8 +6,20 @@ import { Stepper } from './components/Stepper'
 import { TextSizeControl } from './components/TextSizeControl'
 import { Legal, type LegalSection } from './components/Legal'
 import { translate, rephrase, isMockMode } from './lib/generate'
-import { ArrowLeftIcon, RefreshIcon } from './components/Icon'
+import { ArrowLeftIcon, RefreshIcon, LockIcon } from './components/Icon'
 import type { TranslateResult } from './lib/types'
+
+const STEPS = [
+  { n: '01', label: 'Your service' },
+  { n: '02', label: 'The job' },
+  { n: '03', label: 'Your résumé' },
+]
+
+const JUMPS = [
+  { id: 'sec-keywords', label: 'What this job wants' },
+  { id: 'sec-bullets', label: 'Your experience' },
+  { id: 'sec-star', label: 'Interview practice' },
+]
 
 // Persist the in-progress draft so a refresh or accidental close doesn't wipe
 // someone's work. Only the two text inputs — never the result.
@@ -101,7 +113,7 @@ export function App() {
         Skip to content
       </a>
       <header className="border-b border-navy-800/70">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-4 sm:px-8">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 sm:px-8">
           <div className="flex items-center gap-2.5">
             <span className="grid h-7 w-7 place-items-center rounded bg-accent font-display text-xs font-extrabold text-navy-950">
               AAR
@@ -122,26 +134,110 @@ export function App() {
 
       {legal && <Legal section={legal} onBack={() => { window.location.hash = '' }} />}
 
-      {!legal && step === 1 && (
-        <section className="mx-auto max-w-2xl px-5 pt-12 sm:px-8">
-          <div className="mb-4 flex items-center gap-3">
-            <span className="label">Military</span>
-            <span className="h-px w-8 bg-accent" />
-            <span className="label text-accent">Civilian</span>
-          </div>
-          <h1 className="font-display text-3xl font-extrabold leading-[1.1] tracking-tight text-ink sm:text-[2.6rem]">
-            Turn your service into a résumé that reads like the job you want.
-          </h1>
-          <p className="mt-4 max-w-xl text-mute">
-            Three quick steps. No résumé-writing know-how needed — we handle the wording, the fit, and
-            even your interview answers.
-          </p>
-        </section>
-      )}
-
+      {/* Two-column composition. The page used to be one centred column at
+          every width, which left ~300px of dead canvas each side on a desktop
+          and read as a stretched phone. The rail carries the persistent
+          context — where you are, and once there's a result, what it says. */}
       {!legal && (
-      <main id="main" tabIndex={-1} className="mx-auto max-w-2xl px-5 py-10 outline-none sm:px-8 lg:py-14">
-        {step < 3 && <Stepper step={step} onJump={setStep} />}
+      <div className="mx-auto grid max-w-6xl gap-x-14 px-5 sm:px-8 lg:grid-cols-[210px_minmax(0,1fr)]">
+        <aside className="no-print hidden pt-14 lg:block">
+          <div className="sticky top-8 space-y-8">
+            {step < 3 ? (
+              <>
+                <ol className="space-y-0">
+                  {STEPS.map((s, i) => {
+                    const n = i + 1
+                    const done = n < step
+                    const now = n === step
+                    return (
+                      <li key={s.n}>
+                        <button
+                          onClick={() => n < step && setStep(n)}
+                          disabled={n >= step}
+                          className={`flex w-full items-baseline gap-3 border-l-2 py-2.5 pl-4 text-left transition-colors ${
+                            now
+                              ? 'border-accent text-ink'
+                              : done
+                                ? 'border-navy-700 text-mute hover:border-steel hover:text-ink'
+                                : 'border-navy-800 text-faint'
+                          }`}
+                        >
+                          <span className="font-display text-xs font-extrabold">{s.n}</span>
+                          <span className="text-sm font-semibold">{s.label}</span>
+                        </button>
+                      </li>
+                    )
+                  })}
+                </ol>
+                <p className="flex items-start gap-2 border-t border-navy-800 pt-5 text-xs leading-relaxed text-faint">
+                  <LockIcon className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                  Your file is read on your device and never uploaded.
+                </p>
+              </>
+            ) : (
+              <>
+                {result && (
+                  <div>
+                    <p className="label mb-1">Match score</p>
+                    <p className="font-display text-4xl font-extrabold text-head">
+                      {result.matchScore}
+                      <span className="ml-1 text-sm font-semibold text-faint">/ 100</span>
+                    </p>
+                  </div>
+                )}
+                {result && (
+                  <nav className="space-y-0 border-t border-navy-800 pt-4">
+                    {JUMPS.map((j) => (
+                      <a
+                        key={j.id}
+                        href={`#${j.id}`}
+                        className="block border-l-2 border-navy-800 py-2 pl-4 text-sm text-mute transition-colors hover:border-accent hover:text-ink"
+                      >
+                        {j.label}
+                      </a>
+                    ))}
+                  </nav>
+                )}
+                <div className="flex flex-col items-start gap-2 border-t border-navy-800 pt-5">
+                  <button onClick={() => setStep(2)} className="btn btn-ghost px-3 py-1.5 text-xs">
+                    <ArrowLeftIcon className="h-3.5 w-3.5" />
+                    Edit my answers
+                  </button>
+                  <button onClick={startOver} className="btn btn-ghost px-3 py-1.5 text-xs">
+                    <RefreshIcon className="h-3.5 w-3.5" />
+                    Start over
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </aside>
+
+        <div className="min-w-0">
+          {step === 1 && (
+            <section className="max-w-2xl pt-12 lg:max-w-3xl">
+              <div className="mb-4 flex items-center gap-3">
+                <span className="label">Military</span>
+                <span className="h-px w-8 bg-accent" />
+                <span className="label text-accent">Civilian</span>
+              </div>
+              <h1 className="font-display text-3xl font-extrabold leading-[1.1] tracking-tight text-ink sm:text-[2.6rem]">
+                Turn your service into a résumé that reads like the job you want.
+              </h1>
+              <p className="mt-4 max-w-xl text-mute">
+                Three quick steps. No résumé-writing know-how needed — we handle the wording, the fit,
+                and even your interview answers.
+              </p>
+            </section>
+          )}
+
+      <main id="main" tabIndex={-1} className="max-w-2xl py-10 outline-none lg:max-w-3xl lg:py-14">
+        {/* The rail is the stepper on desktop; this is its small-screen twin. */}
+        {step < 3 && (
+          <div className="lg:hidden">
+            <Stepper step={step} onJump={setStep} />
+          </div>
+        )}
 
         <div key={step} className="step-in">
         {step === 1 && (
@@ -161,18 +257,19 @@ export function App() {
         )}
 
         {step === 3 && (
-          <div className="mx-auto max-w-3xl">
-            <div className="mb-8 flex items-center justify-between gap-3">
+          <div className="max-w-3xl">
+            {/* Desktop keeps these in the rail; small screens need them inline. */}
+            <div className="mb-8 flex items-center justify-between gap-3 lg:hidden">
               <button
                 onClick={() => setStep(2)}
-                className="inline-flex items-center gap-1.5 text-sm font-semibold text-mute transition-colors hover:text-ink"
+                className="btn btn-ghost px-3 py-1.5 text-sm"
               >
                 <ArrowLeftIcon className="h-4 w-4" />
                 Edit my answers
               </button>
               <button
                 onClick={startOver}
-                className="inline-flex items-center gap-1.5 text-sm font-semibold text-steel transition-colors hover:text-ink"
+                className="btn btn-ghost px-3 py-1.5 text-sm"
               >
                 <RefreshIcon className="h-4 w-4" />
                 Start over
@@ -191,10 +288,12 @@ export function App() {
         )}
         </div>
       </main>
+        </div>
+      </div>
       )}
 
       <footer className="border-t border-navy-800/70">
-        <div className="mx-auto max-w-5xl space-y-4 px-5 py-8 sm:px-8">
+        <div className="mx-auto max-w-6xl space-y-4 px-5 py-8 sm:px-8">
           <details className="group">
             <summary className="cursor-pointer list-none text-sm font-semibold text-mute transition-colors marker:content-none hover:text-ink">
               Is my information safe?

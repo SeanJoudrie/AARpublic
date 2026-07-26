@@ -113,7 +113,7 @@ export function StepRecord({
       }}
     >
       <div>
-        <h2 className="font-display text-2xl font-bold text-ink sm:text-3xl">
+        <h2 className="font-display text-xl font-semibold text-ink">
           First, tell us about your service.
         </h2>
         <p className="mt-2 text-mute">
@@ -259,7 +259,7 @@ export function StepRecord({
         />
         <button
           onClick={() => onResume(SAMPLE_RESUME)}
-          className="mt-2 text-xs font-semibold text-steel underline decoration-navy-600 underline-offset-4 transition-colors hover:text-ink hover:decoration-accent"
+          className="btn btn-ghost mt-2 px-3 py-1.5 text-xs"
         >
           Not sure what to write? Fill in an example
         </button>
