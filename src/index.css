@@ -71,32 +71,36 @@
   --font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
 }
 
-/* The deliberate second theme. Same roles, re-picked for a dark ground —
-   the brass lifts to gold because brass on near-black is mud. */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-ground: #0d1219;
-    --color-surface: #131c28;
-    --color-raised: #1b2637;
-    --color-rule: #24324a;
-    --color-rule-strong: #35486a;
-    --color-edge: #52678d;
-    --color-rail: #1b2637;
-    --color-on-rail: #eceadf;
-    /* On a dark ground an ink button is invisible, so the accent carries it. */
-    --color-btn: #f2b134;
-    --color-on-btn: #0a1019;
+/* AAR commits to paper. This design's whole argument is that the app should
+   look like the civilian world the user is moving into, not another dark tool
+   — so it does not follow the OS dark preference. It did briefly, and the
+   result was that anyone with dark mode on saw navy-and-gold and reasonably
+   concluded the redesign had never shipped.
 
-    --color-head: #fbf9f3;
-    --color-ink: #eceadf;
-    --color-mute: #a7b0c0;
-    --color-faint: #7a8598;
-    --color-accent: #f2b134;
-    --color-accent-soft: #f6c66a;
-    --color-steel: #8bb0de;
-    --color-good: #7fd6a6;
-    --color-low: #e08a6b;
-  }
+   The dark palette is kept, behind an explicit opt-in, for whenever a theme
+   toggle is added. Nothing selects it today. */
+:root[data-theme='dark'] {
+  --color-ground: #0d1219;
+  --color-surface: #131c28;
+  --color-raised: #1b2637;
+  --color-rule: #24324a;
+  --color-rule-strong: #35486a;
+  --color-edge: #52678d;
+  --color-rail: #1b2637;
+  --color-on-rail: #eceadf;
+  /* On a dark ground an ink button is invisible, so the accent carries it. */
+  --color-btn: #f2b134;
+  --color-on-btn: #0a1019;
+
+  --color-head: #fbf9f3;
+  --color-ink: #eceadf;
+  --color-mute: #a7b0c0;
+  --color-faint: #7a8598;
+  --color-accent: #f2b134;
+  --color-accent-soft: #f6c66a;
+  --color-steel: #8bb0de;
+  --color-good: #7fd6a6;
+  --color-low: #e08a6b;
 }
 
 html {
